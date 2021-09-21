@@ -1,0 +1,19 @@
+Jenkins, Consul, Vault, HAProxy, K8s, postgresql
+
+terraform
+
+
+Linode Cloud
+
+Jenkins>Terraform to provision
+	Ansible to configure
+	Vault to store secrets
+	Consul for service management + integration with k8s services
+	Helm to deploy to K8s
+	
+
+
+post vars
+title
+description
+timetoread
