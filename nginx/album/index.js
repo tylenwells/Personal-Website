@@ -10,12 +10,14 @@ getpostsApp.controller('PostController', function PostController($scope) {
             title: "The Master Plan",
             description: "The plan for implementation of this site, including what solution are planned, etc.",
             timetoread: "5 minutes",
+            content: "This is placeholder text to make sure that the Angular is working properly. asdf asdf asdf asdf asd fasdf asdfasd fasdf asdf asdqery qwefqwef qwerfq wetr qtq wertqwe tqwerqwe qert",
         },
         {
             id: "1",
             title: "The Master Plan",
             description: "The plan for implementation of this site, including what solution are planned, etc.",
             timetoread: "5 minutes",
+            content: " MODAL # 2 This is placeholder text to make sure that the Angular is working properly. asdf asdf asdf asdf asd fasdf asdfasd fasdf asdf asdqery qwefqwef qwerfq wetr qtq wertqwe tqwerqwe qert",
         }
     ];
 });

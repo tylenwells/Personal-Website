@@ -13,7 +13,4 @@ Jenkins>Terraform to provision
 	
 
 
-post vars
-title
-description
-timetoread
+bootstrap js for modal window
