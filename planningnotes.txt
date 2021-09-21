@@ -6,11 +6,24 @@ terraform
 Linode Cloud
 
 Jenkins>Terraform to provision
-	Ansible to configure
-	Vault to store secrets
-	Consul for service management + integration with k8s services
-	Helm to deploy to K8s
-	
+		Ansible to configure
+		Consul for service management + integration with k8s services
+		Helm to deploy to K8s
+
+Vault to store secrets
+
+toolchain cluster (host locally?):
+	Jenkins
+	Terraform
+	Helm - 
+	Vault - access via short term tokenization "Tokenization Transform"
 
 
-bootstrap js for modal window
+app cluster:
+	Jenkins client
+	ansible client
+	Consul
+	nginx
+	postgresql
+	elk stack monitoring
+
