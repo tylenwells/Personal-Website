@@ -27,4 +27,4 @@ app cluster:
 	postgresql
 	elk stack monitoring
 
-test
+
