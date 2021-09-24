@@ -15,9 +15,17 @@ Vault to store secrets
 toolchain cluster (host locally?):
 	Jenkins - installed
 	Terraform - installed
-	Helm - 
-	Vault - access via short term tokenization "Tokenization Transform"
+	Helm - isntalled (no configured though)
+	Vault - (installed but empty) - provide access via short term tokenization "Tokenization Transform"
 
+Todos: 
+1. finish the app, containerize it
+2. create consul service mesh
+3. create haproxy l7 lb for site and db
+4. create monitoring with elk stack
+5. create helm chart to deploy it all
+6. modify jenkins pipeline to handle it all while providing insight.
+7. Start making the posts for the site.
 
 app cluster:
 	Jenkins client
@@ -27,4 +35,4 @@ app cluster:
 	postgresql
 	elk stack monitoring
 
-test
+
