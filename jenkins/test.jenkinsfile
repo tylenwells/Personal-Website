@@ -12,8 +12,8 @@ pipeline {
                 }
                 echo "Commit hash: ${COMMIT_HASH}"
                 script {
-                    if (env.CHANGE_BRANCH) {
-                        BRANCH_NAME = ${env.CHANGE_BRANCH}
+                    if (true) {
+                        echo ${env.CHANGE_BRANCH}
                     } else {
                         BRANCH_NAME = ${env.BRANCH_NAME}
                     }
