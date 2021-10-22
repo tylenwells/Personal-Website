@@ -10,11 +10,12 @@ pipeline {
                     ''',
                     returnStdout: true).trim()
                 }
+                echo "Commit hash: ${COMMIT_HASH}"
                 script {
-                    if (!env.CHANGE_BRANCH) {
-                        BRANCH_NAME = ${env.BRANCH_NAME}
-                    } else {
+                    if (env.CHANGE_BRANCH) {
                         BRANCH_NAME = ${env.CHANGE_BRANCH}
+                    } else {
+                        BRANCH_NAME = ${env.BRANCH_NAME}
                     }
                 }
                 echo "Branch name(env): ${env.BRANCH_NAME}"
