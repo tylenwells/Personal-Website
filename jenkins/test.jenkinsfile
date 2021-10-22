@@ -9,10 +9,12 @@ pipeline {
                     git show | grep -i -m 1 commit | awk '{print $2}' 
                     ''',
                     returnStdout: true).trim()
-                    if (${env.CHANGE_BRANCH} == null) {
-                    BRANCH_NAME = ${env.BRANCH_NAME}
+                }
+                script {
+                    if (!env.CHANGE_BRANCH) {
+                        BRANCH_NAME = ${env.BRANCH_NAME}
                     } else {
-                    BRANCH_NAME = ${env.CHANGE_BRANCH}
+                        BRANCH_NAME = ${env.CHANGE_BRANCH}
                     }
                 }
                 echo "Branch name(env): ${env.BRANCH_NAME}"
