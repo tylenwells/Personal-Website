@@ -1,9 +1,8 @@
 pipeline {
     agent { label 'master' }
     stages {
-        stage('build') {
+        stage('Preload') {
             steps {
-                echo "Hello test branch!"
                 script {
                     COMMIT_HASH = sh (
                     script: '''#!/bin/bash
@@ -12,7 +11,13 @@ pipeline {
                     returnStdout: true).trim()
                 }
                 echo "Commit hash: ${COMMIT_HASH}"
-                 
+                echo "Branch name: ${env.BRANCH_NAME}"
+                echo "Change ID: ${env.CHANGE_ID}"
+            }
+        }
+        stage('var test') {
+            steps {
+                echo "Commit hash: ${COMMIT_HASH}"
             }
         }
     }
