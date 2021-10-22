@@ -9,17 +9,18 @@ pipeline {
                     git show | grep -i -m 1 commit | awk '{print $2}' 
                     ''',
                     returnStdout: true).trim()
-                    BRANCH_NAME = sh (
-                    script: '''#!/bin/bash
-                    git show -s --pretty=%D HEAD | tr -s ',' '\n' | sed 's/^ //' | grep -v -e HEAD | sed 's:origin/::' 
-                    ''',
-                    returnStdout: true).trim()
+                    if (${env.CHANGE_BRANCH} = "null") {
+                    BRANCH_NAME = ${env.BRANCH_NAME}
+                    }
+                    else {
+                    BRANCH_NAME = ${env.CHANGE_BRANCH}
+                    }
                 }
-                echo "Commit hash: ${COMMIT_HASH}"
-                echo "Branch name: ${BRANCH_NAME}"
                 echo "Branch name(env): ${env.BRANCH_NAME}"
                 echo "Change branch(env): ${env.CHANGE_BRANCH}"
                 echo "Change ID: ${env.CHANGE_ID}"
+                echo "Branch name: ${BRANCH_NAME}"
+                echo "Commit hash: ${COMMIT_HASH}"
             }
         }
         
