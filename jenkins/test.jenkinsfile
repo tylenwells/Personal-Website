@@ -1,10 +1,43 @@
 pipeline {
     agent { label 'master' }
     stages {
-        stage('build') {
+        stage('Preload') {
             steps {
-                echo "Hello test branch!"
-                sh 'pwd'
+                script {
+                    COMMIT_HASH = sh (
+                    script: '''#!/bin/bash
+                    git show | grep -i -m 1 commit | awk '{print $2}' 
+                    ''',
+                    returnStdout: true).trim()
+                }
+                echo "Commit hash: ${COMMIT_HASH}"
+                echo "Branch name: ${env.BRANCH_NAME}"
+                echo "Change branch: ${env.CHANGE_BRANCH}"
+                echo "Change ID: ${env.CHANGE_ID}"
+            }
+        }
+        
+        stage('Pre-Deployment') {
+            steps {
+                echo "This is the Pre-Deployment Stage"
+            }
+        }
+        
+        stage('Deployment') {
+            steps {
+                echo "This is the Deployment Stage"
+            }
+        }
+        
+        stage('Configuration') {
+            steps {
+                echo "This is the Configuration Stage"
+            }
+        }
+        
+        stage('Post-Deployment') {
+            steps {
+                echo "This is the Pre-Deployment Stage"
             }
         }
     }
