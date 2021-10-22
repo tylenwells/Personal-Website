@@ -4,7 +4,9 @@ pipeline {
         stage('build') {
             steps {
                 echo "Hello test branch!"
-                sh 'pwd'
+                 sh '''#!/bin/bash
+                 git show | grep -i commit | awk '{print $2}' 
+                 '''
             }
         }
     }
