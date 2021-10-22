@@ -12,6 +12,7 @@ pipeline {
                 }
                 echo "Commit hash: ${COMMIT_HASH}"
                 echo "Branch name: ${env.BRANCH_NAME}"
+                echo "Change branch: ${env.CHANGE_BRANCH}"
                 echo "Change ID: ${env.CHANGE_ID}"
             }
         }
