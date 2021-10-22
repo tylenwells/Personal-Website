@@ -4,9 +4,13 @@ pipeline {
         stage('build') {
             steps {
                 echo "Hello test branch!"
-                 sh '''#!/bin/bash
-                 git show | grep -i commit | awk '{print $2}' 
-                 '''
+                COMMIT_HASH = sh (
+                script: '''#!/bin/bash
+                git show | grep -i -m 1 commit | awk '{print $2}' 
+                ''',
+                returnStdout: true).trim()
+                echo "Commit hash: ${COMMIT_HASH}"
+                 
             }
         }
     }
