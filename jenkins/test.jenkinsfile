@@ -11,7 +11,7 @@ pipeline {
                     returnStdout: true).trim()
                     BRANCH_NAME = sh (
                     script: '''#!/bin/bash
-                    git show -s --pretty=%D HEAD | tr -s ',' '\n' | sed 's/^ //' | grep -v -e HEAD | sed 's/origin\///' 
+                    git show -s --pretty=%D HEAD | tr -s ',' '\n' | sed 's/^ //' | grep -v -e HEAD | sed 's:origin/::' 
                     ''',
                     returnStdout: true).trim()
                 }
