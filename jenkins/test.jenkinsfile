@@ -11,8 +11,7 @@ pipeline {
                     returnStdout: true).trim()
                     if (${env.CHANGE_BRANCH} == null) {
                     BRANCH_NAME = ${env.BRANCH_NAME}
-                    }
-                    else {
+                    } else {
                     BRANCH_NAME = ${env.CHANGE_BRANCH}
                     }
                 }
