@@ -15,9 +15,28 @@ pipeline {
                 echo "Change ID: ${env.CHANGE_ID}"
             }
         }
-        stage('var test') {
+        
+        stage('Pre-Deployment') {
             steps {
-                echo "Commit hash: ${COMMIT_HASH}"
+                echo "This is the Pre-Deployment Stage"
+            }
+        }
+        
+        stage('Deployment') {
+            steps {
+                echo "This is the Deployment Stage"
+            }
+        }
+        
+        stage('Configuration') {
+            steps {
+                echo "This is the Configuration Stage"
+            }
+        }
+        
+        stage('Post-Deployment') {
+            steps {
+                echo "This is the Pre-Deployment Stage"
             }
         }
     }
