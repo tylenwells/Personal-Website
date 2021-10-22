@@ -1,6 +1,17 @@
 pipeline {
     agent { label 'master' }
     stages {
+        stage('Set Build Name') {
+            steps {
+                script {
+                if (env.BRANCH_NAME.startsWith('PR')) {
+                    BRANCH_NAME = "#${env.CHANGE_BRANCH}"
+                } else {
+                    BRANCH_NAME = "#${env.BRANCH_NAME}"
+                }
+                }
+            }
+        }
         stage('Preload') {
             steps {
                 script {
@@ -9,14 +20,6 @@ pipeline {
                     git show | grep -i -m 1 commit | awk '{print $2}' 
                     ''',
                     returnStdout: true).trim()
-                }
-                echo "Commit hash: ${COMMIT_HASH}"
-                script {
-                    if (true) {
-                        echo ${env.CHANGE_BRANCH}
-                    } else {
-                        BRANCH_NAME = ${env.BRANCH_NAME}
-                    }
                 }
                 echo "Branch name(env): ${env.BRANCH_NAME}"
                 echo "Change branch(env): ${env.CHANGE_BRANCH}"
