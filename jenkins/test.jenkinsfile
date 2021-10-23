@@ -25,25 +25,33 @@ pipeline {
         
         stage('Pre-Deployment') {
             steps {
+                //retrieve linode pat from vault
+                //check for namespace inside k8s cluster matching BRANCH_NAME
+                //if namespace BRANCH_NAME exists, grab the COMMIT_HASH of the existing deployment
+                //if namespace BRANCH_NAME doesn't exist, create it.
                 echo "This is the Pre-Deployment Stage"
             }
         }
         
         stage('Deployment') {
             steps {
+                //Deploy containers with helm.
                 echo "This is the Deployment Stage"
             }
         }
         
         stage('Configuration') {
             steps {
+                //Configure containers with Ansible.
                 echo "This is the Configuration Stage"
             }
         }
         
         stage('Post-Deployment') {
             steps {
-                echo "This is the Pre-Deployment Stage"
+                //apply ingress rule using file
+                //delete old deployment matching existing COMMIT_HASH
+                echo "This is the Post-Deployment Stage"
             }
         }
     }
