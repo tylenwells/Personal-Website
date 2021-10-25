@@ -1,5 +1,9 @@
 pipeline {
     agent { label 'master' }
+    environment {
+        VAULT_TOKEN = credentials('VAULT_TOKEN')
+    }
+
     stages {
         stage('Preload') {
             steps {
@@ -30,6 +34,21 @@ pipeline {
                 //if namespace BRANCH_NAME exists, grab the COMMIT_HASH of the existing deployment
                 //if namespace BRANCH_NAME doesn't exist, create it.
                 echo "This is the Pre-Deployment Stage"
+
+                script {
+                    
+                    sh (
+                    script: '''#!/bin/bash
+                    vault login -no-store ${env.VAULT_TOKEN} 
+                    ''')
+                    LINODE_PAT = sh (
+                    script: '''#!/bin/bash
+                    vault lo
+                    vault kv get -field=pat kv/linode/ 
+                    ''',
+                    returnStdout: true).trim()
+                }
+                echo "Success?: ${LINODE_PAT}"
             }
         }
         
