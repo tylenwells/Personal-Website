@@ -36,17 +36,22 @@ pipeline {
                 echo "This is the Pre-Deployment Stage"
 
                 script {
+
+                    //login to vault using token, -no-store specifically doesn't save the token
+                    // sh (
+                    // script: '''#!/bin/bash
+                    // vault login -no-store $VAULT_TOKEN 
+                    // ''')
                     
-                    sh (
-                    script: '''#!/bin/bash
-                    vault login -no-store $VAULT_TOKEN 
-                    ''')
+                    //retrieve linode PAT and save to variable
                     LINODE_PAT = sh (
                     script: '''#!/bin/bash
                     vault lo
                     vault kv get -field=pat kv/linode/ 
                     ''',
                     returnStdout: true).trim()
+
+
                 }
                 echo "Success?: ${LINODE_PAT}"
             }
