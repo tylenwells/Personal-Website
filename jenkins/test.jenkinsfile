@@ -39,7 +39,7 @@ pipeline {
                     
                     sh (
                     script: '''#!/bin/bash
-                    vault login -no-store ${env.VAULT_TOKEN} 
+                    vault login -no-store $VAULT_TOKEN 
                     ''')
                     LINODE_PAT = sh (
                     script: '''#!/bin/bash
