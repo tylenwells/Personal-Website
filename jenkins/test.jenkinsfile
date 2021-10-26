@@ -2,11 +2,12 @@ pipeline {
     agent { label 'master' }
     environment {
         VAULT_TOKEN = credentials('VAULT_TOKEN')
-        COMMIT_HASH = sh (
+        COMMIT_HASH = """${sh (
         script: '''#!/bin/bash
         git show | grep -i -m 1 commit | awk '{print $2}' 
         ''',
-        returnStdout: true).trim()
+        returnStdout: true).trim()}
+        """
         if (env.BRANCH_NAME.startsWith('PR')) {
             BRANCH_REF = "${env.CHANGE_BRANCH}"
         } else {
