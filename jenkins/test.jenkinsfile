@@ -48,9 +48,9 @@ pipeline {
                 echo "Checking to see if namespace for ${BRANCH_NAME} exists..."
                 script {
                     //Jenkins can't handle assigning an empty value to a Jenkins env variable so I have to do the count instead. I will use count = 0 as "empty".
-                    NS_COUNT = sh (
-                    script: '''
-                    kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespaces | grep -ioc ${BRANCH_NAME}
+                    NAMESPACE = sh (
+                    script: '''#!/bin/bash
+                    kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespaces | grep -ioc ${BRANCH_NAME} 
                     ''',
                     returnStdout: true).trim()
                 }
