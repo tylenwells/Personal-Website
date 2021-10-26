@@ -1,5 +1,10 @@
 pipeline {
     agent { label 'master' }
+    environment {
+        VAULT_TOKEN = credentials('VAULT_TOKEN')
+        BRANCH_REF = "${env.BRANCH_NAME.startsWith('PR') ? env.CHANGE_BRANCH.toLowerCase() : env.BRANCH_NAME.toLowerCase()}"
+    }
+
     stages {
         stage('Preload') {
             steps {
@@ -9,16 +14,16 @@ pipeline {
                     git show | grep -i -m 1 commit | awk '{print $2}' 
                     ''',
                     returnStdout: true).trim()
-                    if (env.BRANCH_NAME.startsWith('PR')) {
-                        BRANCH_NAME = "${env.CHANGE_BRANCH}"
-                    } else {
-                        BRANCH_NAME = "${env.BRANCH_NAME}"
-                    }
+                    // if (env.BRANCH_NAME.startsWith('PR')) {
+                    //     BRANCH_REF = "${env.CHANGE_BRANCH}"
+                    // } else {
+                    //     BRANCH_REF = "${env.BRANCH_NAME}"
+                    // }
                 }
                 echo "Branch name(env): ${env.BRANCH_NAME}"
                 echo "Change branch(env): ${env.CHANGE_BRANCH}"
                 echo "Change ID: ${env.CHANGE_ID}"
-                echo "Branch name: ${BRANCH_NAME}"
+                echo "Branch ref: ${BRANCH_REF}"
                 echo "Commit hash: ${COMMIT_HASH}"
             }
         }
@@ -26,24 +31,72 @@ pipeline {
         stage('Pre-Deployment') {
             steps {
                 echo "This is the Pre-Deployment Stage"
+                //retrieve linode pat from vault
+                //check for namespace matching BRANCH_REF inside k8s cluster 
+                //if namespace BRANCH_REF exists, grab the COMMIT_HASH of the existing deployment
+                //if namespace BRANCH_REF doesn't exist, create it.
+
+                echo "Retrieving Linode PAT from Vault"
+                script {
+                    LINODE_PAT = sh (
+                    script: '''#!/bin/bash
+                    vault kv get -field=pat kv/linode/ 
+                    ''',
+                    returnStdout: true).trim()
+                }
+                echo "Linode PAT retrieved and stored in LINODE_PAT var"
+
+                echo "Checking to see if namespace for ${BRANCH_REF} exists..."
+                
+                sh 'printenv'
+
+                script {
+                    //Jenkins can't handle assigning an empty value to a Jenkins env variable so I have to do the count instead. I will use count = 0 as "empty".
+                    NAMESPACE = sh (
+                        script: '''#!/bin/bash
+                        kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespaces | grep -ioc $BRANCH_REF | sed 's:0:no:'
+                        ''',
+                        returnStdout: true).trim()
+                }
+                
+
+                echo "Namespace found?: ${NAMESPACE}"
+
+                echo "Retrieving old commit hash if namespace ${BRANCH_REF} exists, otherwise creating it..."
+                script {
+                    if (NAMESPACE != "no") {
+                        OLD_COMMIT_HASH = sh (
+                        script: '''#!/bin/bash
+                        kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf describe service httpservice --namespace=${BRANCH_REF} | grep -i --line-buffered commit_hash | awk -F= '{ print $2 }'
+                        ''',
+                        returnStdout: true).trim()
+                    } else {
+                        sh 'kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf create namespace ${BRANCH_REF}'
+                    }
+                }
+                echo "Old Commit Hash: ${OLD_COMMIT_HASH}"
             }
         }
         
         stage('Deployment') {
             steps {
+                //Deploy containers with helm.
                 echo "This is the Deployment Stage"
             }
         }
         
         stage('Configuration') {
             steps {
+                //Configure containers with Ansible.
                 echo "This is the Configuration Stage"
             }
         }
         
         stage('Post-Deployment') {
             steps {
-                echo "This is the Pre-Deployment Stage"
+                //apply ingress rule using file
+                //delete old deployment matching existing COMMIT_HASH
+                echo "This is the Post-Deployment Stage"
             }
         }
     }
