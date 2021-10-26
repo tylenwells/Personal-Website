@@ -29,31 +29,45 @@ pipeline {
         
         stage('Pre-Deployment') {
             steps {
+                echo "This is the Pre-Deployment Stage"
                 //retrieve linode pat from vault
-                //check for namespace inside k8s cluster matching BRANCH_NAME
+                //check for namespace matching BRANCH_NAME inside k8s cluster 
                 //if namespace BRANCH_NAME exists, grab the COMMIT_HASH of the existing deployment
                 //if namespace BRANCH_NAME doesn't exist, create it.
-                echo "This is the Pre-Deployment Stage"
 
+                echo "Retrieving Linode PAT from Vault"
                 script {
-
-                    //login to vault using token, -no-store specifically doesn't save the token
-                    // sh (
-                    // script: '''#!/bin/bash
-                    // vault login -no-store $VAULT_TOKEN 
-                    // ''')
-                    
-                    //retrieve linode PAT and save to variable
                     LINODE_PAT = sh (
                     script: '''#!/bin/bash
-                    vault lo
                     vault kv get -field=pat kv/linode/ 
                     ''',
                     returnStdout: true).trim()
-
-
                 }
-                echo "Success?: ${LINODE_PAT}"
+                echo "Linode PAT retrieved and stored in LINODE_PAT var"
+
+                echo "Checking to see if namespace for ${BRANCH_NAME} exists..."
+                script {
+                    NAMESPACE = sh (
+                    script: '''#!/bin/bash
+                    kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespace ${BRANCH_NAME} | grep -io ${BRANCH_NAME}
+                    ''',
+                    returnStdout: true).trim()
+                }
+                echo "Namespace: ${NAMESPACE}"
+
+                echo "Retrieving old commit hash if namespace ${BRANCH_NAME} exists, otherwise creating it..."
+                script {
+                    if (!NAMESPACE.isEmpty()) {
+                        OLD_COMMIT_HASH = sh (
+                        script: '''#!/bin/bash
+                        kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf describe service HttpService --namespace=${NAMESPACE} | grep -i --line-buffered COMMIT_HASH | awk -F= '{ print $2 }'
+                        ''',
+                        returnStdout: true).trim()
+                    } else {
+                        sh 'kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf create namespace ${BRANCH_NAME}'
+                    }
+                }
+                echo "Old Commit Hash: ${OLD_COMMIT_HASH}"
             }
         }
         
