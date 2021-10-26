@@ -2,6 +2,7 @@ pipeline {
     agent { label 'master' }
     environment {
         VAULT_TOKEN = credentials('VAULT_TOKEN')
+        BRANCH_REF = "${env.BRANCH_NAME.startsWith('PR') ? env.CHANGE_BRANCH : env.BRANCH_NAME}"
     }
 
     stages {
@@ -13,11 +14,11 @@ pipeline {
                     git show | grep -i -m 1 commit | awk '{print $2}' 
                     ''',
                     returnStdout: true).trim()
-                    if (env.BRANCH_NAME.startsWith('PR')) {
-                        BRANCH_REF = "${env.CHANGE_BRANCH}"
-                    } else {
-                        BRANCH_REF = "${env.BRANCH_NAME}"
-                    }
+                    // if (env.BRANCH_NAME.startsWith('PR')) {
+                    //     BRANCH_REF = "${env.CHANGE_BRANCH}"
+                    // } else {
+                    //     BRANCH_REF = "${env.BRANCH_NAME}"
+                    // }
                 }
                 echo "Branch name(env): ${env.BRANCH_NAME}"
                 echo "Change branch(env): ${env.CHANGE_BRANCH}"
