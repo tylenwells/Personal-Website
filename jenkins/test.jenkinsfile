@@ -54,12 +54,12 @@ pipeline {
                     //Jenkins can't handle assigning an empty value to a Jenkins env variable so I have to do the count instead. I will use count = 0 as "empty".
                     NAMESPACE = sh (
                         script: '''#!/bin/bash
-                        kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespaces | grep -ioc $BRANCH_REF
+                        kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespaces | grep -io $BRANCH_REF
                         ''',
                         returnStdout: true).trim()
                 }
                 
-                
+
                 echo "Namespace found?: ${NAMESPACE}"
 
                 echo "Retrieving old commit hash if namespace ${BRANCH_REF} exists, otherwise creating it..."
