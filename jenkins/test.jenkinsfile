@@ -49,7 +49,7 @@ pipeline {
                 script {
                     NAMESPACE = sh (
                     script: '''#!/bin/bash
-                    kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespace ${BRANCH_NAME} | grep -io ${BRANCH_NAME}
+                    kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespaces | grep -io ${BRANCH_NAME}
                     ''',
                     returnStdout: true).trim()
                 }
