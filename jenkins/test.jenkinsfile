@@ -59,6 +59,7 @@ pipeline {
                         returnStdout: true).trim()
                 }
                 
+                
                 echo "Namespace found?: ${NAMESPACE}"
 
                 echo "Retrieving old commit hash if namespace ${BRANCH_REF} exists, otherwise creating it..."
