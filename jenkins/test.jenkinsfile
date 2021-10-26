@@ -2,41 +2,30 @@ pipeline {
     agent { label 'master' }
     environment {
         VAULT_TOKEN = credentials('VAULT_TOKEN')
-        COMMIT_HASH = """${sh (
-        script: '''#!/bin/bash
-        git show | grep -i -m 1 commit | awk '{print $2}' 
-        ''',
-        returnStdout: true).trim()}
-        """
-        if (env.BRANCH_NAME.startsWith('PR')) {
-            BRANCH_REF = "${env.CHANGE_BRANCH}"
-        } else {
-            BRANCH_REF = "${env.BRANCH_NAME}"
-        }
     }
 
     stages {
-        // stage('Preload') {
-        //     steps {
-        //         // script {
-        //         //     COMMIT_HASH = sh (
-        //         //     script: '''#!/bin/bash
-        //         //     git show | grep -i -m 1 commit | awk '{print $2}' 
-        //         //     ''',
-        //         //     returnStdout: true).trim()
-        //         //     if (env.BRANCH_NAME.startsWith('PR')) {
-        //         //         BRANCH_REF = "${env.CHANGE_BRANCH}"
-        //         //     } else {
-        //         //         BRANCH_REF = "${env.BRANCH_NAME}"
-        //         //     }
-        //         // }
-        //         echo "Branch name(env): ${env.BRANCH_NAME}"
-        //         echo "Change branch(env): ${env.CHANGE_BRANCH}"
-        //         echo "Change ID: ${env.CHANGE_ID}"
-        //         echo "Branch ref: ${BRANCH_REF}"
-        //         echo "Commit hash: ${COMMIT_HASH}"
-        //     }
-        // }
+        stage('Preload') {
+            steps {
+                script {
+                    COMMIT_HASH = sh (
+                    script: '''#!/bin/bash
+                    git show | grep -i -m 1 commit | awk '{print $2}' 
+                    ''',
+                    returnStdout: true).trim()
+                    if (env.BRANCH_NAME.startsWith('PR')) {
+                        BRANCH_REF = "${env.CHANGE_BRANCH}"
+                    } else {
+                        BRANCH_REF = "${env.BRANCH_NAME}"
+                    }
+                }
+                echo "Branch name(env): ${env.BRANCH_NAME}"
+                echo "Change branch(env): ${env.CHANGE_BRANCH}"
+                echo "Change ID: ${env.CHANGE_ID}"
+                echo "Branch ref: ${BRANCH_REF}"
+                echo "Commit hash: ${COMMIT_HASH}"
+            }
+        }
         
         stage('Pre-Deployment') {
             steps {
@@ -56,14 +45,16 @@ pipeline {
                 }
                 echo "Linode PAT retrieved and stored in LINODE_PAT var"
 
-                echo "Checking to see if namespace for ${env.BRANCH_REF} exists..."
+                echo "Checking to see if namespace for ${BRANCH_REF} exists..."
                 script {
                     //Jenkins can't handle assigning an empty value to a Jenkins env variable so I have to do the count instead. I will use count = 0 as "empty".
-                    NAMESPACE = sh (
-                    script: '''#!/bin/bash
-                    kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespaces | grep -ioc ${BRANCH_REF} 
-                    ''',
-                    returnStdout: true).trim()
+                    NAMESPACE = withEnv(['BRANCH_REF=${BRANCH_REF}']) {
+                        sh (
+                        script: '''#!/bin/bash
+                        kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespaces | grep -ioc ${BRANCH_REF} 
+                        ''',
+                        returnStdout: true).trim()
+                    }
                 }
                 echo "Namespace found?: ${count}"
 
