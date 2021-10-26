@@ -49,10 +49,10 @@ pipeline {
                 script {
                     //Jenkins can't handle assigning an empty value to a Jenkins env variable so I have to do the count instead. I will use count = 0 as "empty".
                     NS_COUNT = sh (
-                    script: '''#!/bin/bash
+                    script: '''
                     kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf get namespaces | grep -io ${BRANCH_NAME}
                     ''',
-                    returnStdout: true)
+                    returnStdout: true).trim()
                 }
                 echo "Namespace found?: ${count}"
 
