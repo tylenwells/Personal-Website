@@ -74,7 +74,7 @@ pipeline {
                         sh 'kubectl --kubeconfig=/var/lib/jenkins/kube/admin.conf create namespace ${BRANCH_REF}'
                     }
                 }
-                echo "Old Commit Hash: ${OLD_COMMIT_HASH}"
+                // echo "Old Commit Hash: ${OLD_COMMIT_HASH}"
             }
         }
         
